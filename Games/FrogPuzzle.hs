@@ -15,7 +15,7 @@ data Symbol = E | R | L
 -- | Represents the current Board state
 type FPBoard = [Symbol]
 
--- | Flexible TicTacToe implementation.
+-- | Flexible Frog Puzzle implementation.
 -- | Changing the number will change size.
 frogNum :: Int
 frogNum = 3
@@ -46,19 +46,18 @@ fpDoMove (FPState cboard PlayerTwo) i = FPState (map modify $ zip [1..] cboard) 
 
 -- | API function, returns available moves to Solver
 fpGetMoves :: FPState -> [Move]
-fpGetMoves (FPState cboard PlayerOne) = [0]
+fpGetMoves (FPState _ PlayerOne) = [0]
 fpGetMoves (FPState cboard PlayerTwo) = map fst $ filter isvalid $ zip [1..] cboard
                                         where (Just ii) = E `elemIndex` cboard
                                               i = ii + 1
                                               isvalid x = x `elem` [(i-1,R) , (i-2,R), (i+1,L), (i+2,L)]
 
 
-                                              -- | p == PlayerOne        = Undecided
-
 -- | API function, returns a @Result@
--- | Evaluates state and returns a Win / Lose / Tie / Nothing
+-- | Evaluates state and returns a Win / Lose / Nothing
+-- | There are no ties here.
 fpBaseCase :: FPState -> Result
-fpBaseCase st@(FPState cboard p)
+fpBaseCase st@(FPState cboard _)
                         | cboard == winnerBoard = Lose
                         | fpGetMoves st == []   = Win
                         | otherwise             = Undecided
@@ -84,7 +83,6 @@ boardToString b = (++"\n") $ intercalate " " $ map s2c b
 -- | Pretty Print set of available moves for user
 fpPrintMoves :: FPState -> String
 fpPrintMoves st = show $ fpGetMoves st
-                --   where isEmpty (_,s) = s == E
                         
 -- | Making our game an instance of PlayableGame
 -- | Adhering to the API provided                  
