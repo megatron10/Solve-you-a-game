@@ -1,9 +1,13 @@
-module TTTtest(testBaseCase, testInitPosn) where
+module TTTtest
+  ( testBaseCase
+  , testInitPosn
+  ) where
 
-import TicTacToe
-import Test.HUnit
-import GamePlay
-import Solver
+import           GamePlay
+import           Solver
+import           Test.HUnit
+import           TicTacToe
+
 
 board1 :: TTTBoard
 board1 = concat [[X, X, X],
@@ -33,7 +37,9 @@ testInitPosn :: Test
 testInitPosn = TestList $ [initState ~=? initPosition]
 
 testBaseCase :: Test
-testBaseCase = TestList $
-                [Win  ~=? baseCase (TTTState board1 PlayerOne) ,
-                 Tie  ~=? baseCase (TTTState board2 PlayerOne) ,
-                 Lose ~=? baseCase (TTTState board3 PlayerOne) ]
+testBaseCase =
+  TestList $
+  [ Win ~=? baseCase (TTTState board1 PlayerOne)
+  , Tie ~=? baseCase (TTTState board2 PlayerOne)
+  , Lose ~=? baseCase (TTTState board3 PlayerOne)
+  ]
