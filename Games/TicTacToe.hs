@@ -96,26 +96,18 @@ getLines b = getRows b ++ getCols b ++ getDiags b
 tttBaseCase :: TTTState -> Result
 tttBaseCase (TTTState cboard cplayer) = 
                         | O_WinLine `elem` lines = Win
-                        | X_WinLine `elem` lines = 
+                        | X_WinLine `elem` lines = Lose
+                        | E `notElem`cboard      = Tie
+                        | otherwise              = Undecided
                         where O_WinLine = replicate boardSize O
                               X_WinLine = replicate boardSize X
-
-1   2  3  4 
-5   6  7  8
-9  10 11 12
-13 14 15 16
-
--- initPosition :: a
--- doMove :: a -> Move -> a
--- baseCase :: a -> Result
--- getMoves :: a -> [Move]
--- whoseTurn :: a -> Player
+                              lines = getLines cboard
 
 
 instance Game TTTState where
   initPosition = tttInitPosition
   doMove = tttDoMove
-  baseCase = tttPrimitive
+  baseCase = tttBaseCase
   getMoves = tttGetMoves
   whoseTurn = tttWhoseTurn
 
@@ -132,24 +124,24 @@ instance PlayableGame TTTBoard where
   showBoard = boardToString
   showMoves = show
 
-board1 :: TTTBoard
-board1 = concat [[X, X, X],
-                 [O, O, X],
-                 [X, O, O]]
+-- board1 :: TTTBoard
+-- board1 = concat [[X, X, X],
+--                  [O, O, X],
+--                  [X, O, O]]
 
-board2 :: TTTBoard
-board2 = concat [[X, X, O],
-                 [O, O, X],
-                 [X, O, O]]
+-- board2 :: TTTBoard
+-- board2 = concat [[X, X, O],
+--                  [O, O, X],
+--                  [X, O, O]]
 
-board3 :: TTTBoard
-board3 = concat [[O, O, O],
-                 [O, X, X],
-                 [X, X, E]]
+-- board3 :: TTTBoard
+-- board3 = concat [[O, O, O],
+--                  [O, X, X],
+--                  [X, X, E]]
 
 
-testPrimitive :: Test
-testPrimitive = TestList $
-                [Win ~=? primitive board1,
-                 Tie ~=? primitive board2,
-                 Lose ~=? primitive board3]
+-- testPrimitive :: Test
+-- testPrimitive = TestList $
+--                 [Win ~=? primitive board1,
+--                  Tie ~=? primitive board2,
+--                  Lose ~=? primitive board3]
