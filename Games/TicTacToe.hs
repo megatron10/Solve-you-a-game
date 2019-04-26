@@ -20,7 +20,7 @@ data Symbol = E | X | O
 type TTTBoard = [Symbol]
 
 boardSize :: Int
-boardSize = 3
+boardSize = 4
 
 data TTTState = TTTState { board  :: TTTBoard
                          , player :: Player
@@ -73,6 +73,15 @@ tttGetMoves (TTTState cboard _) = map fst $ filter isEmpty (zip [1..] cboard)
 --                                 | n `rem` (boardSize-1) == 1  =  s : getDs xs
 --                                 | otherwise                   =  getDs xs
 
+-- 1 2 3
+-- 4 5 6
+-- 7 8 9
+
+--  1  2  3  4
+--  5  6  7  8
+--  9 10 11 12
+-- 13 14 15 16
+
 
 getDiag1 :: TTTBoard -> [Symbol]
 getDiag1 b = map snd $ filter isD1 (zip [1..] b)
@@ -80,7 +89,7 @@ getDiag1 b = map snd $ filter isD1 (zip [1..] b)
 
 getDiag2 :: TTTBoard -> [Symbol]
 getDiag2 b = map snd $ filter isD2 (zip [1..] b)
-             where isD2 (n, _) =  n `rem` (boardSize-1) == 1
+             where isD2 (n, _) =  n `rem` (boardSize-1) == 1 && n>1 && n<(boardSize * boardSize)
 
 getDiags :: TTTBoard -> [[Symbol]]
 getDiags b = [getDiag1 b , getDiag2 b]
@@ -123,13 +132,25 @@ instance Game TTTState where
 --   rows''' = map (take maxLen . (++ repeat ' ')) rows''
 --   rows = map ((++ "\n") . intercalate "|") $ boardTo2D rows'''
 
+
+
+
 boardToString :: TTTBoard -> String
-boardToString b = concat $ map show b
+boardToString b = intercalate horizLine rows
+                  where horizLine = (replicate (4*boardSize -1) '-') ++ "\n"
+                        row l = (intercalate "|" $ (map s2c l)) ++ " \n"
+                        rows = map row $ getRows b
+                        s2c E = "   "
+                        s2c X = " X "
+                        s2c O = " O "
 
-
+tttPrintMoves :: TTTBoard -> String
+tttPrintMoves b = show $ map fst $ filter isEmpty $ zip [1..] b
+                  where isEmpty (_,s) = s == E
+                        
 instance PlayableGame TTTState where
   showGame = boardToString . board
-  printMoves = show . board
+  printMoves = tttPrintMoves . board
 
 -- board1 :: TTTBoard
 -- board1 = concat [[X, X, X],
