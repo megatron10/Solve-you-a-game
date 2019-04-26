@@ -4,24 +4,26 @@ module RunGame where
 import Solver
 import GamePlay
 import TicTacToe
-import OneTwoTen
+import TwentyOne
 import Control.Monad.State.Lazy
 --import Data.Map as M
 
 {-|
-	Game initialization function asks the user
-	which game to  play.
+	Game initialization function This asks 
+	user which game to play currently provided
+	example games are The Twenty one game and 
+	Tic Tac Toe.  
 -}
 startGame :: IO ()
 startGame = do
   putStrLn "which Game would you like to play?"
-  putStr $ unlines ["1) One two Ten",
+  putStr $ unlines ["1) The Twenty One Game",
                     "2) Tic Tac Toe"]
   option <- getLine
   let opt = parseOption option
   case opt of
     Just 1 -> do
-       t <- solveGameMap "oneTwoTen" :: IO (GameMap OneTwoTen)
+       t <- solveGameMap "oneTwoTen" :: IO (GameMap TwentyOne)
        evalStateT playTheGame $ GameState t initPosition
     Just 2 -> do
       t <- solveGameMap "ticTacToe_map" :: IO (GameMap TTTState)
