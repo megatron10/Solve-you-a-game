@@ -12,9 +12,9 @@ import           Solver
 
 -- | Data type for representing cell contents - Empty / X / O
 data Symbol
-  = E   -- ^ Empty
-  | X   -- ^ X
-  | O   -- ^ O
+  = E -- ^ Empty
+  | X -- ^ X
+  | O -- ^ O
   deriving (Show, Eq, Ord)
 
 -- | Represents the current Board state
