@@ -4,6 +4,7 @@ module RunGame where
 import Solver
 import GamePlay
 import TicTacToe
+import OneTwoTen
 import Control.Monad.State.Lazy
 --import Data.Map as M
 
@@ -19,9 +20,9 @@ startGame = do
   option <- getLine
   let opt = parseOption option
   case opt of
-    -- Just 1 -> do
-    --   t <- solveGameMap "oneTwoThe_map" :: IO (GameMap OTTBoard)
-    --   evalStateT playGame $ GameState t initialPosition
+    Just 1 -> do
+       t <- solveGameMap "oneTwoTen" :: IO (GameMap OneTwoTen)
+       evalStateT playTheGame $ GameState t initPosition
     Just 2 -> do
       t <- solveGameMap "ticTacToe_map" :: IO (GameMap TTTState)
       evalStateT playTheGame $ GameState t initPosition
@@ -38,7 +39,7 @@ parseOption string = case reads string of
 
                                        
 runGame :: IO ()
-runGame = do { startGame; runGame} 
+runGame = do { startGame} 
 
 solveGameMap :: (Game a) => FilePath -> IO (GameMap a)
 solveGameMap fname = do
