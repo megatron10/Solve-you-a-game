@@ -1,6 +1,6 @@
 {-# OPTIONS -Wall #-}
 
-module OneTwoTen where
+module TwentyOne where
 
 import Solver
 import GamePlay
@@ -9,7 +9,7 @@ import GamePlay
 	Data type for oneTwoTen game holds whose turn is
 	it and current sum value.
 -}
-data OneTwoTen = OneTwoTen {  turn :: Player,
+data TwentyOne = TwentyOne {  turn :: Player,
                               ottvalue :: Move
                            }  deriving (Show, Read, Eq, Ord)
 
@@ -17,22 +17,22 @@ data OneTwoTen = OneTwoTen {  turn :: Player,
 	Max value to reach Aim of the game
 -}
 gameSize :: Move
-gameSize = 10
+gameSize = 21
 
 {-| 
-	OneTwoTen game an instance of Game class.
+	TwentyOne game an instance of Game class.
 -}
-instance Game OneTwoTen where
-  initPosition = OneTwoTen PlayerOne 0
-  doMove b m = OneTwoTen (getNextPlayer . turn $ b) (m + (ottvalue b))
+instance Game TwentyOne where
+  initPosition = TwentyOne PlayerOne 0
+  doMove b m = TwentyOne (getNextPlayer . turn $ b) (m + (ottvalue b))
   baseCase = ottbaseCase
-  getMoves _ = [1, 2]
+  getMoves _ = [1, 2, 3]
   whoseTurn = turn
 
 {-| 
-	OneTwoTen is a also an instance of Playable Game
+	TwentyOne is a also an instance of Playable Game
 -}
-instance PlayableGame OneTwoTen where
+instance PlayableGame TwentyOne where
   showGame b = "Current: " ++ show (ottvalue b)
                 ++ " Goal: " ++ show gameSize ++ "\n"
   printMoves = show 
@@ -41,8 +41,8 @@ instance PlayableGame OneTwoTen where
 	Checks for result of the game and return 
 	win | lose | Undecided
 -}
-ottbaseCase :: OneTwoTen -> Result
+ottbaseCase :: TwentyOne -> Result
 ottbaseCase b
   | ottvalue b < gameSize = Undecided
-  | turn b == PlayerOne = Lose
-  | otherwise = Win 
+  | turn b == PlayerOne = Win
+  | otherwise = Lose 
