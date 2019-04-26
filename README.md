@@ -1,5 +1,5 @@
 # Solve-You-A-Game
-[![CircleCI](https://circleci.com/gh/IITH-SBJoshi/haskell-7-1.svg?style=svg)](https://circleci.com/gh/IITH-SBJoshi/haskell-7-1)
+[![CircleCI](https://circleci.com/gh/IITH-SBJoshi/haskell-7-1.svg?style=svg&circle-token=708be149818b6e98d35428b7a7e4bfa84feafb35)](https://circleci.com/gh/IITH-SBJoshi/haskell-7-1)
 
 A framework for Solving Zero Sum Games with Perfect Information
 
