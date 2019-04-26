@@ -76,9 +76,9 @@ fpBaseCase st@(FPState cboard _)
 -- | Adhering to the API provided
 instance Game FPState where
   initPosition = fpInitPosition
-  doMove = fpDoMove
-  baseCase = fpBaseCase
-  getMoves = fpGetMoves
+  doMove    = fpDoMove
+  baseCase  = fpBaseCase
+  getMoves  = fpGetMoves
   whoseTurn = fpWhoseTurn
 
 -- | Makes a string out of the board for text UI.
@@ -98,20 +98,3 @@ fpPrintMoves st = show $ fpGetMoves st
 instance PlayableGame FPState where
   showGame = boardToString . board
   printMoves = fpPrintMoves
--- board1 :: TTTBoard
--- board1 = concat [[X, X, X],
---                  [O, O, X],
---                  [X, O, O]]
--- board2 :: TTTBoard
--- board2 = concat [[X, X, O],
---                  [O, O, X],
---                  [X, O, O]]
--- board3 :: TTTBoard
--- board3 = concat [[O, O, O],
---                  [O, X, X],
---                  [X, X, E]]
--- testPrimitive :: Test
--- testPrimitive = TestList $
---                 [Win ~=? primitive board1,
---                  Tie ~=? primitive board2,
---                  Lose ~=? primitive board3]
