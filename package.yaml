@@ -23,9 +23,12 @@ dependencies:
 - base >= 4.7 && < 5
 - containers
 - mtl
+- split
 
 library:
-  source-dirs: src
+  source-dirs:
+  - src
+  - Games
 
 executables:
   Solve-You-A-Game-exe:
