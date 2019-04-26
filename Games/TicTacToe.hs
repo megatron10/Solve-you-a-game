@@ -17,13 +17,17 @@ import GamePlay
 data Symbol = E | X | O
                     deriving (Show, Eq, Ord)
 
+-- | Represents the current Board state
 type TTTBoard = [Symbol]
 
+-- | Flexible TicTacToe implementation.
+-- | Changing the number will change size.
 boardSize :: Int
-boardSize = 4
+boardSize = 3
 
-data TTTState = TTTState { board  :: TTTBoard
-                         , player :: Player
+-- | Main State type. Stores game state.
+data TTTState = TTTState { board  :: TTTBoard   --- ^ Represents Cell contents of board
+                         , player :: Player     --- ^ Which player will move next
                          } deriving(Show, Eq, Ord)
 
 
@@ -39,70 +43,59 @@ setSymbol posn symb cboard
                                 | i == posn = symb
                                 | otherwise = s
 
--- flipPlayer :: Player -> Player
--- flipPlayer PlayerOne = PlayerTwo
--- flipPlayer PlayerTwo = PlayerOne
 
-
-
+--- | API function returning next Player
 tttWhoseTurn :: TTTState -> Player
 tttWhoseTurn = player
 
-
+--- | API function, takes game state and move
+--- | returns modified state after playing move
 tttDoMove :: TTTState -> Move -> TTTState
 tttDoMove (TTTState cboard PlayerOne) i = TTTState (setSymbol i X cboard) PlayerTwo
 tttDoMove (TTTState cboard PlayerTwo) i = TTTState (setSymbol i O cboard) PlayerOne
 
-
+--- | API function, returns available moves to Solver
 tttGetMoves :: TTTState -> [Move]
 tttGetMoves (TTTState cboard _) = map fst $ filter isEmpty (zip [1..] cboard)
                                   where isEmpty (_, sym) = sym == E
 
+{-|
+    Generating every @boardSize@ line.
+    They will then be compares to a filled winner line.
+-}
 
--- getDiag1 :: TTTBoard -> [Symbol]
--- getDiag1 b = getDs (zip [1..] b)
---              where getDs []         = []
---                    getDs ((n,s):xs) = 
---                                 | n `rem` (boardSize+1) == 1  =  s : getDs xs
---                                 | otherwise                   =  getDs xs
-
--- getDiag2 :: TTTBoard -> [Symbol]
--- getDiag2 b = getDs (zip [1..] b)
---              where getDs []         = []
---                    getDs ((n,s):xs) = 
---                                 | n `rem` (boardSize-1) == 1  =  s : getDs xs
---                                 | otherwise                   =  getDs xs
-
--- 1 2 3
--- 4 5 6
--- 7 8 9
-
---  1  2  3  4
---  5  6  7  8
---  9 10 11 12
--- 13 14 15 16
-
-
+--- | Extracts forward diagonal of board
 getDiag1 :: TTTBoard -> [Symbol]
 getDiag1 b = map snd $ filter isD1 (zip [1..] b)
              where isD1 (n, _) =  n `rem` (boardSize+1) == 1
 
+
+--- | Extracts backward diagonal of board
 getDiag2 :: TTTBoard -> [Symbol]
 getDiag2 b = map snd $ filter isD2 (zip [1..] b)
              where isD2 (n, _) =  n `rem` (boardSize-1) == 1 && n>1 && n<(boardSize * boardSize)
 
+--- | Encloses both the diagonals in a list             
 getDiags :: TTTBoard -> [[Symbol]]
 getDiags b = [getDiag1 b , getDiag2 b]
 
+--- | Extracts rows and returns a list of rows
 getRows :: TTTBoard -> [[Symbol]]
 getRows = chunksOf boardSize
 
+
+--- | Extracts columns and returns a list of colums
 getCols :: TTTBoard -> [[Symbol]]
 getCols = transpose . getRows
 
+--- | Merges all lines and combines them in a list.
+--- | returns a list of lines i.e. lists of symbols.
 getLines :: TTTBoard -> [[Symbol]]
 getLines b = getRows b ++ getCols b ++ getDiags b
 
+
+--- | API function, returns a @Result@
+--- | Evaluates state and returns a Win / Lose / Tie / Nothing
 tttBaseCase :: TTTState -> Result
 tttBaseCase (TTTState cboard _)
                         | winLine_X `elem` tttlines = Win
@@ -113,7 +106,8 @@ tttBaseCase (TTTState cboard _)
                               winLine_O = replicate boardSize O
                               tttlines = getLines cboard
 
-
+--- | Making our game an instance of Game
+--- | Adhering to the API provided
 instance Game TTTState where
   initPosition = tttInitPosition
   doMove = tttDoMove
@@ -121,20 +115,7 @@ instance Game TTTState where
   getMoves = tttGetMoves
   whoseTurn = tttWhoseTurn
 
--- boardTo2D = getRows
-
--- boardToString :: TTTBoard -> String
--- boardToString b = intercalate divider rows where
---   divider = take (maxLen * boardSize + (boardSize - 1)) (repeat '-') ++ "\n"
---   rows' = zip [(1 :: Int)..] b
---   rows'' = map (\(n, p) -> if p == E then show n else show p) rows'
---   maxLen = maximum . map length $ rows''
---   rows''' = map (take maxLen . (++ repeat ' ')) rows''
---   rows = map ((++ "\n") . intercalate "|") $ boardTo2D rows'''
-
-
-
-
+--- | Makes a string out of the board for text UI.
 boardToString :: TTTBoard -> String
 boardToString b = intercalate horizLine rows
                   where horizLine = (replicate (4*boardSize -1) '-') ++ "\n"
@@ -144,10 +125,14 @@ boardToString b = intercalate horizLine rows
                         s2c X = " X "
                         s2c O = " O "
 
+
+--- | Pretty Print set of available moves for user
 tttPrintMoves :: TTTBoard -> String
 tttPrintMoves b = show $ map fst $ filter isEmpty $ zip [1..] b
                   where isEmpty (_,s) = s == E
                         
+--- | Making our game an instance of PlayableGame
+--- | Adhering to the API provided                  
 instance PlayableGame TTTState where
   showGame = boardToString . board
   printMoves = tttPrintMoves . board
