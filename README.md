@@ -3,6 +3,12 @@
 
 A framework for Solving Zero Sum Games with Perfect Information
 
+To use the framework user has to define a instance of class Game as
+defined in Solver.hs and implementation has to be provided to the functions
+defined there. Also to play the geme the game should be an instance of solvable 
+game defined in GamePlay.hs to support functions like showGame and printMoves. <br>
+
+some games are provided like TicTacToe, Chomp and Two other.
 
 ## Instructions to install 
 clone the repository:	<pre>
@@ -28,3 +34,4 @@ Install using <pre> stack install
 To generate the documentation run following command	<pre> 
 stack haddock 
 The documentation will be generated at ./.stack-work/install/X86-64*/lts-*/8.*/doc </pre> 
+
