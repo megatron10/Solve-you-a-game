@@ -7,7 +7,7 @@ import           Data.List           as List
 import           Data.Map            as M
 import           Prelude             as Prelude
 import           Solver
-
+import           System.IO
 {-|
   nextPositon takes games current position
   and returns list of moves , gamepositons possible.
@@ -149,7 +149,8 @@ parseInputMove s =
 -}
 getInputMove :: [Move] -> IO Move
 getInputMove valid = do
-  putStr "Your Move : \n"
+  putStr "Your Move : "
+  hFlush stdout
   moveString <- getLine
   let inputmove = parseInputMove moveString
   case inputmove of
