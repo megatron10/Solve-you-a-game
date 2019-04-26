@@ -67,15 +67,15 @@ playTheGame = do
   let posi = curPosition gamest
   case baseCase posi of
     Win -> do
-      lift $ putStrLn "You win! \n Game state: \n"
+      lift $ putStrLn "-----------------You win! ------------------ \nGame state: "
       lift $ putStrLn (showGame posi)
       return ()
     Lose -> do
-      lift $ putStrLn "Computer wins! \n Game state: \n"
+      lift $ putStrLn "-----------------Computer wins!-------------- \nGame state: "
       lift $ putStrLn (showGame posi)
       return ()
     Tie -> do
-      lift $ putStrLn "It's a tie! \n Game state: \n"
+      lift $ putStrLn "-----------------It's a tie!----------------- \nGame state:"
       lift $ putStrLn (showGame posi)
       return ()
     Undecided -> case whoseTurn posi of
@@ -93,10 +93,8 @@ humanPlay = do
   gamest <- get
   let posi = curPosition gamest
   let moves = getMoves posi
-  lift $ putStr("current Game State\n")
-  lift $ putStr(showGame posi)
-  lift $ putStrLn("Available moves: ")
-  lift $ putStrLn(printMoves posi)
+  lift $ putStr ("\ncurrent Game State :\n" ++ showGame posi)
+  lift $ putStrLn ("Possible moves: " ++ show moves)
   humanmove <- lift $ getInputMove moves
   put $ GameState (gamemap gamest) (doMove posi humanmove)
   playTheGame
@@ -113,10 +111,8 @@ computerPlay = do
   let moves = getMoves posi
   bestAvailableMove <- bestMove moves posi
   put $ GameState (gamemap gamest) (doMove posi bestAvailableMove)
-  lift $ putStr ("Computer's move: ")
-  lift $ putStrLn(show bestAvailableMove)
-  lift $ putStrLn("current Game State:\n")
-  lift $ putStrLn(showGame posi)
+  lift $ putStr ("current Game State:\n" ++ showGame posi)
+  lift $ putStrLn ("Computer chose move " ++ show bestAvailableMove)
   playTheGame
 
 
@@ -145,7 +141,7 @@ parseInputMove s = case reads s of
 -}
 getInputMove :: [Move] -> IO Move
 getInputMove valid = do
-  putStr "Your Move ?"
+  putStr "Your Move : \n"
   moveString <- getLine
   let inputmove = parseInputMove moveString
   case inputmove of
