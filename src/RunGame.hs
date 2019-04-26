@@ -6,6 +6,7 @@ import GamePlay
 import TicTacToe
 import TwentyOne
 import FrogPuzzle
+import Chomp
 import Control.Monad.State.Lazy
 --import Data.Map as M
 
@@ -20,7 +21,8 @@ startGame = do
   putStrLn "which Game would you like to play?"
   putStr $ unlines ["1) The Twenty One Game",
                     "2) Tic Tac Toe",
-                    "3) Frog Puzzle"]
+                    "3) Frog Puzzle",
+                    "4) Chomp"]
   option <- getLine
   let opt = parseOption option
   case opt of
@@ -32,6 +34,9 @@ startGame = do
       evalStateT playTheGame $ GameState t initPosition
     Just 3 -> do
       t <- solveGameMap "frogPuzzle" :: IO (GameMap FPState)
+      evalStateT playTheGame $ GameState t initPosition
+    Just 4 -> do
+      t <- solveGameMap "chomp" :: IO (GameMap ChompState)
       evalStateT playTheGame $ GameState t initPosition
     _ -> do { putStrLn "Unrecognized option"; startGame }
 
