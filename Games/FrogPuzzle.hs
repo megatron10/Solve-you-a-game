@@ -21,7 +21,7 @@ frogNum :: Int
 frogNum = 3
 
 -- | Main State type. Stores game state.
-data FPState = FPState  { board  :: FPBoard   -- ^ Represents Cell contents of board
+data FPState = FPState  { board  :: FPBoard    -- ^ Represents Cell contents of board
                         , player :: Player     -- ^ Which player will move next
                         } deriving(Show, Eq, Ord)
 
