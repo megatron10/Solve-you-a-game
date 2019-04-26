@@ -108,9 +108,9 @@ humanPlay = do
   playTheGame
 
 {-|
-	computerMove function makes one step of computer move
-	this prints move taken by the computer and the final
-	state of the game.
+	computerMove function takes a gamestate of a playableGame and
+	makes one step of computer move this prints move taken 
+	by the computer and the final state of the game.
 -}
 computerPlay :: PlayableGame a => GamePlayState a ()
 computerPlay = do
@@ -135,7 +135,7 @@ bestMove moves posi = do
 
 {-|
 	parseInputMove function that takes a string
-	and maybe return a Move
+	and maybe return a Move.
 -}
 parseInputMove :: String -> Maybe Move
 parseInputMove s =
@@ -144,8 +144,8 @@ parseInputMove s =
     _            -> Nothing
 
 {-|
-   getInputMove function takes a list of moves
-   and takes a valid move from the input.
+	getInputMove function takes a list of moves
+	and takes a Input of a  valid move from the user.
 -}
 getInputMove :: [Move] -> IO Move
 getInputMove valid = do
