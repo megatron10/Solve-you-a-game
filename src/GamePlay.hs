@@ -17,12 +17,12 @@ nextPosition pos = Prelude.foldr (\m xs -> (m, doMove pos m) : xs) []
 
 class Game a =>
       PlayableGame a
+  where
   {-|
   showGame is function that takes a game state and
   returns a string that will printed while playing game
   This function has to be provided by game implementation
   -}
-  where
   showGame :: a -> String
   {-|
   printMoves is a function that takes a game state and

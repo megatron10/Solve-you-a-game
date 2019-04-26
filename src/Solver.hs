@@ -50,29 +50,28 @@ data Result
 -}
 class (Ord a, Show a) =>
       Game a
-    -- | Initial Position of Game
   where
   initPosition :: a
-    {-|
+  {-|
         doMove takes as input the present game state, and the move to be performed
         It returns the game state after the move is made
-    -}
+  -}
   doMove :: a -> Move -> a
-    {-|
+  {-|
         baseCase takes the present game state as input
         It returns the end result of the game ( Win/Lose ) if it is completed
         Otherwise it returns the Result Undecided
-    -}
+  -}
   baseCase :: a -> Result
-    {-|
+  {-|
         getMoves takes the present Game state as input
         Returns a list of Game states that valid moves from the input state can lead to in one move
-    -}
+  -}
   getMoves :: a -> [Move]
-    {-|
+  {-|
         whoseTurn takes the present Game state as input
         Returns the Player whose turn it is make a move
-    -}
+  -}
   whoseTurn :: a -> Player
 
 -- | Type synonym for a map of Game states to result
