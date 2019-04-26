@@ -1,4 +1,3 @@
-import TicTacToe
 import Test.HUnit
 
 board1 :: TTTBoard

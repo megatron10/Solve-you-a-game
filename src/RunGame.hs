@@ -55,6 +55,6 @@ runGame :: IO ()
 runGame = do
   startGame
 
-solveGameMap :: (Game a) => FilePath -> IO (GameMap a)
-solveGameMap fname = do
+solveGameMap :: (Game a) => String -> IO (GameMap a)
+solveGameMap _ = do
   return solveGame

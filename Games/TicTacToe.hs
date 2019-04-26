@@ -96,7 +96,7 @@ getLines :: TTTBoard -> [[Symbol]]
 getLines b = getRows b ++ getCols b ++ getDiags b
 
 -- | API function, returns a @Result@
--- | Evaluates state and returns a Win / Lose / Tie / Nothing
+-- | Evaluates state and returns a Win / Lose / Tie / Undecided
 tttBaseCase :: TTTState -> Result
 tttBaseCase (TTTState cboard _)
   | winLine_X `elem` tttlines = Win
