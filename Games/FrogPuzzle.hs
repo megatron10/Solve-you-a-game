@@ -76,9 +76,9 @@ fpBaseCase st@(FPState cboard _)
 -- | Adhering to the API provided
 instance Game FPState where
   initPosition = fpInitPosition
-  doMove = fpDoMove
-  baseCase = fpBaseCase
-  getMoves = fpGetMoves
+  doMove    = fpDoMove
+  baseCase  = fpBaseCase
+  getMoves  = fpGetMoves
   whoseTurn = fpWhoseTurn
 
 -- | Makes a string out of the board for text UI.
