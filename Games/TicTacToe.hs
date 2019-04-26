@@ -49,8 +49,8 @@ tttWhoseTurn (TTTState _ player) = player
 
 
 tttDoMove :: TTTState -> Move -> TTTState
-tttDoMove (TTTState cboard PlayerOne) i = TTTState (setSymbol i O cboard) PlayerTwo
-tttDoMove (TTTState cboard PlayerTwo) i = TTTState (setSymbol i X cboard) PlayerOne
+tttDoMove (TTTState cboard PlayerOne) i = TTTState (setSymbol i X cboard) PlayerTwo
+tttDoMove (TTTState cboard PlayerTwo) i = TTTState (setSymbol i O cboard) PlayerOne
 
 
 tttGetMoves :: TTTState -> [Move]
@@ -95,12 +95,12 @@ getLines b = getRows b ++ getCols b ++ getDiags b
 
 tttBaseCase :: TTTState -> Result
 tttBaseCase (TTTState cboard cplayer) = 
-                        | O_WinLine `elem` lines = Win
-                        | X_WinLine `elem` lines = Lose
+                        | X_WinLine `elem` lines = Win
+                        | O_WinLine `elem` lines = Lose
                         | E `notElem`cboard      = Tie
                         | otherwise              = Undecided
-                        where O_WinLine = replicate boardSize O
-                              X_WinLine = replicate boardSize X
+                        where X_WinLine = replicate boardSize X
+                              O_WinLine = replicate boardSize O
                               lines = getLines cboard
 
 
@@ -121,8 +121,8 @@ boardToString b = intercalate divider rows where
   rows = map ((++ "\n") . intercalate "|") $ boardTo2D rows'''
 
 instance PlayableGame TTTBoard where
-  showBoard = boardToString
-  showMoves = show
+  showBoard = boardToString . board
+  showMoves = show . board
 
 -- board1 :: TTTBoard
 -- board1 = concat [[X, X, X],
