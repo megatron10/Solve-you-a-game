@@ -58,8 +58,52 @@ tttGetMoves (TTTState cboard _) = map fst $ filter isEmpty (zip [1..] b)
                                   where isEmpty (_, sym) = sym == E
 
 
+-- getDiag1 :: TTTBoard -> [Symbol]
+-- getDiag1 b = getDs (zip [1..] b)
+--              where getDs []         = []
+--                    getDs ((n,s):xs) = 
+--                                 | n `rem` (boardSize+1) == 1  =  s : getDs xs
+--                                 | otherwise                   =  getDs xs
+
+-- getDiag2 :: TTTBoard -> [Symbol]
+-- getDiag2 b = getDs (zip [1..] b)
+--              where getDs []         = []
+--                    getDs ((n,s):xs) = 
+--                                 | n `rem` (boardSize-1) == 1  =  s : getDs xs
+--                                 | otherwise                   =  getDs xs
 
 
+getDiag1 :: TTTBoard -> [Symbol]
+getDiag1 b = map snd $ filter isD1 (zip [1..] b)
+             where isD1 (n, _) =  n `rem` (boardSize+1) == 1
+
+getDiag2 :: TTTBoard -> [Symbol]
+getDiag2 b = map snd $ filter isD2 (zip [1..] b)
+             where isD2 (n, _) =  n `rem` (boardSize-1) == 1
+
+getDiags :: TTTBoard -> [[Symbol]]
+getDiags b = getDiag1 b ++ getDiag2 b
+
+getRows :: TTTBoard -> [[Symbol]]
+getRows = cunksOf boardSize
+
+getCols :: TTTBoard -> [[Symbol]]
+getCols = transpose getRows
+
+getLines :: TTTBoard -> [[Symbol]]
+getLines b = getRows b ++ getCols b ++ getDiags b
+
+tttBaseCase :: TTTState -> Result
+tttBaseCase (TTTState cboard cplayer) = 
+                        | O_WinLine `elem` lines = Win
+                        | X_WinLine `elem` lines = 
+                        where O_WinLine = replicate boardSize O
+                              X_WinLine = replicate boardSize X
+
+1   2  3  4 
+5   6  7  8
+9  10 11 12
+13 14 15 16
 
 -- initPosition :: a
 -- doMove :: a -> Move -> a
