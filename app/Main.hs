@@ -5,5 +5,4 @@ import RunGame (runGame)
 import Lib
 
 main :: IO ()
-main = someFunc
---main = runGame
+main = runGame
