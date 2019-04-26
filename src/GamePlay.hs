@@ -1,5 +1,5 @@
 {-# LANGUAGE IncoherentInstances #-}
-module Game where
+module GamePlay where
 
 import Solver
 import Prelude as Prelude
