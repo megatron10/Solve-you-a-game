@@ -1,4 +1,7 @@
 import TTTtest
+import Test.HUnit
 
-main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = do
+    runTestTT testBaseCase
+    runTestTT testInitPosn
+    return ()
