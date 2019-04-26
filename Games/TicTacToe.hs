@@ -128,7 +128,7 @@ boardToString b = intercalate horizLine rows
 
 --- | Pretty Print set of available moves for user
 tttPrintMoves :: TTTBoard -> String
-tttPrintMoves b = show $ map fst $ filter isEmpty $ zip [1..] b
+tttPrintMoves b = show $ map fst $ filter isEmpty $ zip [1::Int ..] b
                   where isEmpty (_,s) = s == E
                         
 --- | Making our game an instance of PlayableGame
