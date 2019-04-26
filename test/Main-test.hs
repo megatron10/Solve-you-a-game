@@ -1,7 +1,10 @@
-import TTTtest
+import TTTtest as TTT
+import FPtest as FP
 import Test.HUnit
 
 main = do
-    runTestTT testBaseCase
-    runTestTT testInitPosn
+    runTestTT TTT.testBaseCase
+    runTestTT TTT.testInitPosn
+    runTestTT FP.testBaseCase
+    runTestTT FP.testInitPosn
     return ()
