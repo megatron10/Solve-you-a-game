@@ -25,7 +25,7 @@ class Game a => PlayableGame a where
   -}
   showGame :: a -> String
 
- {-|
+  {-|
   printMoves is a function that takes a game state and 
   returns a string that will print possible game moves 
   for the human player to play. 

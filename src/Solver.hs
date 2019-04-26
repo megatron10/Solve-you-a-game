@@ -102,12 +102,12 @@ solveGame = S.execState (solve initPosition) M.empty where
         -- get present GameMap, try to use already generated results
         case M.lookup pos s of
             Just val -> return val                                          -- If Result is already computed, return Result
-            Nothing  -> case baseCase pos of                               -- Compute the result
+            Nothing  -> case baseCase pos of                                -- Compute the result
                 
                 Undecided -> do                                             -- At Internal Node, i.e. Not a base case, game has not ended
                     let children_game_states = map (doMove pos) (getMoves pos) 
                         optimizerFunc = if (whoseTurn pos) == PlayerOne then playerOneOptimal else playerTwoOptimal
-                    {-|
+                    {-
                         This is the key-line in the function.
                         It calls the solver on all children_game_states
                         It then merges the results and the GameMap of all the returned Solver States, using sequence
@@ -118,7 +118,7 @@ solveGame = S.execState (solve initPosition) M.empty where
                     S.modify (M.insert pos val)          -- store the calculated result from the optimizer function in the GameMap
                     return val                           -- sets the calculated result as the result of the state monad for the whole do operation
                 
-                base_Outcome -> do                                           -- At leaf node
+                base_Outcome -> do                                          -- At leaf node
                     S.modify (M.insert pos base_Outcome) -- store the base case result from the baseCase function in the GameMap
                     return base_Outcome                  -- sets the base case result as the result of the state monad for the do operation
 
