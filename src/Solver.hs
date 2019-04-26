@@ -1,13 +1,7 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE FlexibleInstances #-}
 
-module Solver (Player(..), getNextPlayer, Move, Result(..), Game(..), GameMap) where
-
-{-|
-    TODO :
-    solveGame
-    getResult
--}
+module Solver (Player(..), getNextPlayer, Move, Result(..), Game(..), GameMap, solveGame, getResult) where
 
 import qualified Data.Map as M
 import Data.Map (Map)
@@ -99,3 +93,34 @@ playerOneOptimal vals | null vals = error "No children to choose from, should ha
 playerTwoOptimal :: [Result] -> Result
 playerTwoOptimal vals | null vals = error "No children to choose from, should have used primitive for base case handling"
                       | otherwise = minimum . filter (/=Undecided) $ vals
+
+solveGame :: Game a => GameMap a
+solveGame = S.execState (solve initPosition) M.empty where
+    solve :: Game a => a -> SolverState a
+    solve pos = do
+        s <- S.get
+        -- get present GameMap, try to use already generated results
+        case M.lookup pos s of
+            Just val -> return val                                          -- If Result is already computed, return Result
+            Nothing  -> case baseCase pos of                               -- Compute the result
+                
+                Undecided -> do                                             -- At Internal Node, i.e. Not a base case, game has not ended
+                    let children_game_states = map (doMove pos) (getMoves pos) 
+                        optimizerFunc = if (whoseTurn pos) == PlayerOne then playerOneOptimal else playerTwoOptimal
+                    {-|
+                        This is the key-line in the function.
+                        It calls the solver on all children_game_states
+                        It then merges the results and the GameMap of all the returned Solver States, using sequence
+                        possible_results is binded to the list of results obtained from all the children_game_states
+                    -}
+                    possible_results <- sequence $ map solve children_game_states
+                    let val = optimizerFunc possible_results
+                    S.modify (M.insert pos val)          -- store the calculated result from the optimizer function in the GameMap
+                    return val                           -- sets the calculated result as the result of the state monad for the whole do operation
+                
+                base_Outcome -> do                                           -- At leaf node
+                    S.modify (M.insert pos base_Outcome) -- store the base case result from the baseCase function in the GameMap
+                    return base_Outcome                  -- sets the base case result as the result of the state monad for the do operation
+
+getResult :: Game a => a -> Result
+getResult x = M.findWithDefault (error $ "No value for " ++ show x) x solveGame
