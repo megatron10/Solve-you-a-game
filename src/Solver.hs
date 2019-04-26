@@ -1,15 +1,26 @@
 {-# OPTIONS_GHC -Wall #-}
 {-# LANGUAGE FlexibleInstances #-}
 
-module Solver (Player(..), getNextPlayer, Move, Result(..), Game(..), GameMap, solveGame, getResult) where
+module Solver
+  ( Player(..)
+  , getNextPlayer
+  , Move
+  , Result(..)
+  , Game(..)
+  , GameMap
+  , solveGame
+  , getResult
+  ) where
 
-import qualified Data.Map as M
-import Data.Map (Map)
 import qualified Control.Monad.State as S
+import           Data.Map            (Map)
+import qualified Data.Map            as M
 
 -- | The @Player@ type stores whose turn it is to play in Game
-data Player = PlayerOne | PlayerTwo
-              deriving (Show, Read, Eq, Ord)
+data Player
+  = PlayerOne
+  | PlayerTwo
+  deriving (Show, Read, Eq, Ord)
 
 {-|
     getNextPlayer takes the Player playing the current turn
@@ -19,55 +30,53 @@ getNextPlayer :: Player -> Player
 getNextPlayer PlayerOne = PlayerTwo
 getNextPlayer PlayerTwo = PlayerOne
 
-
 {-|
     @Move@ is a type synonym for Int
     It stores integer corresponding to a move in Game
 -}
 type Move = Int
 
-
 -- | The @Result@ type stores the expected outcome of a game state
-data Result = Undecided | Lose | Tie | Win
-              deriving(Show, Read, Eq, Ord)
+data Result
+  = Undecided
+  | Lose
+  | Tie
+  | Win
+  deriving (Show, Read, Eq, Ord)
 
 {-|
     Typeclass to specify games.
     Games supported by this framework should be defined as instances of the Game typeclass.
 -}
-class (Ord a, Show a) => Game a where
+class (Ord a, Show a) =>
+      Game a
     -- | Initial Position of Game
-    initPosition :: a
-
+  where
+  initPosition :: a
     {-|
         doMove takes as input the present game state, and the move to be performed
         It returns the game state after the move is made
     -}
-    doMove :: a -> Move -> a
-
+  doMove :: a -> Move -> a
     {-|
         baseCase takes the present game state as input
         It returns the end result of the game ( Win/Lose ) if it is completed
         Otherwise it returns the Result Undecided
     -}
-    baseCase :: a -> Result
-    
+  baseCase :: a -> Result
     {-|
         getMoves takes the present Game state as input
         Returns a list of Game states that valid moves from the input state can lead to in one move
     -}
-    getMoves :: a -> [Move]
-
+  getMoves :: a -> [Move]
     {-|
         whoseTurn takes the present Game state as input
         Returns the Player whose turn it is make a move
     -}
-    whoseTurn :: a -> Player
-
+  whoseTurn :: a -> Player
 
 -- | Type synonym for a map of Game states to result
 type GameMap a = Map a Result
-
 
 {-|
     SolverState a (here a is GameState) is an instance of the State Monad from Control.Monad.State.
@@ -76,51 +85,61 @@ type GameMap a = Map a Result
 -}
 type SolverState a = S.State (GameMap a) Result
 
-
 {-|
     Based on ordering(member of Ord typeclass) given to Results,
     Player One chooses the optimal move based on the results of all the child states
 -}
 playerOneOptimal :: [Result] -> Result
-playerOneOptimal vals | null vals = error "No children to choose from, should have used primitive for base case handling"
-                      | otherwise = maximum vals
-
+playerOneOptimal vals
+  | null vals =
+    error
+      "No children to choose from, should have used primitive for base case handling"
+  | otherwise = maximum vals
 
 {-|
     Based on ordering(member of Ord typeclass) given to Results,
     Player Two chooses the optimal move based on the results of all the child states
 -}
 playerTwoOptimal :: [Result] -> Result
-playerTwoOptimal vals | null vals = error "No children to choose from, should have used primitive for base case handling"
-                      | otherwise = minimum . filter (/=Undecided) $ vals
+playerTwoOptimal vals
+  | null vals =
+    error
+      "No children to choose from, should have used primitive for base case handling"
+  | otherwise = minimum . filter (/= Undecided) $ vals
 
 solveGame :: Game a => GameMap a
-solveGame = S.execState (solve initPosition) M.empty where
+solveGame = S.execState (solve initPosition) M.empty
+  where
     solve :: Game a => a -> SolverState a
     solve pos = do
-        s <- S.get
+      s <- S.get
         -- get present GameMap, try to use already generated results
-        case M.lookup pos s of
-            Just val -> return val                                          -- If Result is already computed, return Result
-            Nothing  -> case baseCase pos of                                -- Compute the result
-                
-                Undecided -> do                                             -- At Internal Node, i.e. Not a base case, game has not ended
-                    let children_game_states = map (doMove pos) (getMoves pos) 
-                        optimizerFunc = if (whoseTurn pos) == PlayerOne then playerOneOptimal else playerTwoOptimal
+      case M.lookup pos s of
+        Just val -> return val -- If Result is already computed, return Result
+        Nothing ->
+          case baseCase pos -- Compute the result
+                of
+            Undecided -- At Internal Node, i.e. Not a base case, game has not ended
+             -> do
+              let children_game_states = map (doMove pos) (getMoves pos)
+                  optimizerFunc =
+                    if (whoseTurn pos) == PlayerOne
+                      then playerOneOptimal
+                      else playerTwoOptimal
                     {-
                         This is the key-line in the function.
                         It calls the solver on all children_game_states
                         It then merges the results and the GameMap of all the returned Solver States, using sequence
                         possible_results is binded to the list of results obtained from all the children_game_states
                     -}
-                    possible_results <- sequence $ map solve children_game_states
-                    let val = optimizerFunc possible_results
-                    S.modify (M.insert pos val)          -- store the calculated result from the optimizer function in the GameMap
-                    return val                           -- sets the calculated result as the result of the state monad for the whole do operation
-                
-                base_Outcome -> do                                          -- At leaf node
-                    S.modify (M.insert pos base_Outcome) -- store the base case result from the baseCase function in the GameMap
-                    return base_Outcome                  -- sets the base case result as the result of the state monad for the do operation
+              possible_results <- sequence $ map solve children_game_states
+              let val = optimizerFunc possible_results
+              S.modify (M.insert pos val) -- store the calculated result from the optimizer function in the GameMap
+              return val -- sets the calculated result as the result of the state monad for the whole do operation
+            base_Outcome -- At leaf node
+             -> do
+              S.modify (M.insert pos base_Outcome) -- store the base case result from the baseCase function in the GameMap
+              return base_Outcome -- sets the base case result as the result of the state monad for the do operation
 
 getResult :: Game a => a -> Result
 getResult x = M.findWithDefault (error $ "No value for " ++ show x) x solveGame
